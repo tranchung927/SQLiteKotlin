@@ -36,7 +36,6 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
 
     @Throws(SQLiteConstraintException::class)
     fun insertUser(user: UserModel): Boolean {
-//        val db = writableDatabase
         val values = ContentValues()
         values.put(DBContract.UserEntity.COLUMN_USER_ID, user.userid)
         values.put(DBContract.UserEntity.COLUMN_AGE, user.age)
@@ -46,17 +45,15 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
     }
     @Throws(SQLiteConstraintException::class)
     fun deleteUser(userid: String): Boolean {
-//        val db = writableDatabase
-        val selection = DBContract.UserEntity.COLUMN_USER_ID + "LIKE ?"
+        val selection = DBContract.UserEntity.COLUMN_USER_ID + " LIKE "
         val selectionArgs = arrayOf(userid)
         db.delete(DBContract.UserEntity.TABLE_NAME, selection, selectionArgs)
         return true
     }
 
     fun readUser(userid: String): UserModel? {
-//        val db = writableDatabase
         var user: UserModel? = null
-        val query = "SELECT * FROM" + DBContract.UserEntity.TABLE_NAME + "WHERE" + DBContract.UserEntity.COLUMN_USER_ID + "=" + userid
+        val query = "SELECT * FROM " + DBContract.UserEntity.TABLE_NAME + " WHERE " + DBContract.UserEntity.COLUMN_USER_ID + " LIKE " + userid
         try {
             var cursor = db.rawQuery(query, null)
             if (cursor.moveToFirst()) {
@@ -65,7 +62,7 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
                     val name: String = cursor.getString(cursor.getColumnIndex(DBContract.UserEntity.COLUMN_NAME))
                     val age: String = cursor.getString(cursor.getColumnIndex(DBContract.UserEntity.COLUMN_AGE))
                     user = UserModel(userid, name, age)
-//                    cursor.moveToNext()
+                    cursor.moveToNext()
                 }
             }
         } catch (e: Exception) {
@@ -77,7 +74,7 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
     fun readAllUsers(): ArrayList<UserModel> {
         var users = ArrayList<UserModel>()
 
-        val query = "SELECT * FROM" + DBContract.UserEntity.TABLE_NAME
+        val query = "SELECT * FROM " + DBContract.UserEntity.TABLE_NAME
         try {
             var cursor = db.rawQuery(query, null)
             if (cursor.moveToFirst()) {
@@ -86,6 +83,7 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
                     val name: String = cursor.getString(cursor.getColumnIndex(DBContract.UserEntity.COLUMN_NAME))
                     val age: String = cursor.getString(cursor.getColumnIndex(DBContract.UserEntity.COLUMN_AGE))
                     users.add(UserModel(userid, name, age))
+                    cursor.moveToNext()
                 }
             }
         } catch (e: Exception) {
