@@ -1,9 +1,15 @@
 package com.big0.chung.sqlitekotlin
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
+import android.util.AttributeSet
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.all_users_activity.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,35 +17,44 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.all_users_activity)
         usersDBHelper = UsersDBHelper(this)
-
+        all_users_recycler_view.layoutManager = LinearLayoutManager(this)
+        all_users_recycler_view.setHasFixedSize(true)
+        val users = usersDBHelper.readAllUsers()
+        val adapter = UserAdapter(users)
+        all_users_recycler_view.adapter = adapter
+        window
     }
 
-    fun createUser(view: View) {
-        val userId = edittext_userid.text.toString()
-        val name = edittext_name.text.toString()
-        val age = edittext_age.text.toString()
-        val user = UserModel(userId, name, age)
-        val result = usersDBHelper.insertUser(user)
-        if (result) {
-            edittext_userid.setText("")
-            edittext_name.setText("")
-            edittext_age.setText("")
-        }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.navigation_item, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
-    fun showAllUsers(view: View) {
-        usersDBHelper.readAllUsers().forEach {
-            println(it.name + " : " + it.userid)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_add -> {
+                addNewUser()
+                return true
+            }
         }
+        return super.onOptionsItemSelected(item)
     }
 
-    fun findUser(view: View) {
-        val userId = edittext_userid.text.toString()
-        val userFind = usersDBHelper.readUser(userId)
-        if (userFind != null) {
-            println(userFind.name)
+    override fun onCreateView(parent: View?, name: String?, context: Context?, attrs: AttributeSet?): View {
+        return super.onCreateView(parent, name, context, attrs)
+    }
+
+    fun addNewUser() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("New User")
+        val view = layoutInflater.inflate(R.layout.dialog_new_user, null)
+        builder.setView(view)
+        builder.setNegativeButton(android.R.string.cancel) { dialog, p1 ->
+            dialog.cancel()
         }
+        builder.show()
     }
 }
