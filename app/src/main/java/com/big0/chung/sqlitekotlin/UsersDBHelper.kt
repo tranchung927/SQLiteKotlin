@@ -41,7 +41,7 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
         values.put(DBContract.UserEntity.COLUMN_AGE, user.age)
         values.put(DBContract.UserEntity.COLUMN_NAME, user.name)
         val newRowId = db.insert(DBContract.UserEntity.TABLE_NAME, null, values)
-        return true
+        return newRowId > 0
     }
     @Throws(SQLiteConstraintException::class)
     fun deleteUser(userid: String): Boolean {
