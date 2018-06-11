@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
             val isInsert = usersDBHelper.insertUser(user)
             if (isInsert) {
                 users.add(user)
+                users.sortBy { it.userid }
                 adapter.notifyDataSetChanged()
             }
         }

@@ -89,7 +89,7 @@ class UsersDBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, 
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
+        users.sortBy { it.userid }
         return users
     }
 }
